@@ -11,11 +11,16 @@ BOOL getBoolFromPreferences(NSString *preferenceValue) {
     [value release];
     return retVal;
 }
-
-
-
-// Log all custom URL schemes registered
-// TODO: should we refactor this out of the main Tweak?
+NSString* RandomString(){
+NSString *alphabet  = @"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXZY0123456789";
+NSMutableString *s = [NSMutableString stringWithCapacity:9];
+for (NSUInteger i = 0; i < 9; i++) {
+    u_int32_t r = arc4random() % [alphabet length];
+    unichar c = [alphabet characterAtIndex:r];
+    [s appendFormat:@"%C", c];
+}
+return s;
+}
 static void traceURISchemes() {
     NSArray *url_schemes = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleURLTypes"];
     for (id schemeBundle in url_schemes) {
@@ -39,7 +44,7 @@ static void traceURISchemes() {
     NSString *appId = [[NSBundle mainBundle] bundleIdentifier];
     if (appId == nil) {
         appId = [[NSProcessInfo processInfo] processName];//A Fix By https://github.com/radj 
-        NSLog(@"Introspy - Process has no bundle ID, use process name instead: %@", appId);
+        NSLog(@"WTFJH - Process has no bundle ID, use process name instead: %@", appId);
     }
     
     // Load WTFJH preferences

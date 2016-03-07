@@ -1,0 +1,10 @@
+obj/
+CompileDefines.xm
+theos/
+.theos/
+.DS_Store
+*.deb
+./Makefile
+*.pyc
+wax.txt
+*.log

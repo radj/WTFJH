@@ -10,10 +10,29 @@
 #import <objc/runtime.h>
 #import <mach-o/getsect.h>
 #import <mach-o/dyld.h>
+#import "./Obfuscation.h"
 #define objectTypeNotSupported @"objectTypeNotSupported"
 #define traceStorage [SQLiteStorage sharedManager]
 
-static NSString *preferenceFilePath = @"/private/var/mobile/Library/Preferences/naville.wtfjh.plist";   
+static NSString *preferenceFilePath = @"/private/var/mobile/Library/Preferences/naville.wtfjh.plist";  
 
 #define Meh1(x) #x
 #define Meh(x) Meh1(x)
+#define WTInit(CLASSNAME,ARGUMENTNAME) CallTracer *tracer = [[CallTracer alloc] initWithClass:CLASSNAME andMethod:ARGUMENTNAME]
+#define WTAdd(Argument,Name) [tracer addArgFromPlistObject:Argument withKey:Name]
+#define WTReturn(Return) [tracer addReturnValueFromPlistObject:Return]
+#define WTSave [traceStorage saveTracedCall: tracer]
+#define WTRelease [tracer release];
+#define WTShouldLog [CallStackInspector wasDirectlyCalledByApp]
+#define WTCallBack(LibraryName,FunctionToCall) static void CallBackFunction(const struct mach_header* mh, intptr_t vmaddr_slide){ \
+					Dl_info image_info;\
+					dladdr(mh, &image_info);\
+					const char *image_name = image_info.dli_fname;\
+					NSString* name=[NSString stringWithUTF8String:image_name];\
+					if([name containsString:LibraryName]){\
+						FunctionToCall();\
+					}\
+					[name release];\
+					}
+#define WTAddCallBack _dyld_register_func_for_add_image(&CallBackFunction);
+
